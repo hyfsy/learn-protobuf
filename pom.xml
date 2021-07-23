@@ -12,16 +12,14 @@
         <maven.compiler.target>8</maven.compiler.target>
 
         <protobuf.version>3.17.3</protobuf.version>
-        <grpc.version>1.32.1</grpc.version>
+        <grpc.version>1.39.0</grpc.version>
 
         <os-maven-plugin.version>1.6.2</os-maven-plugin.version>
         <protobuf-maven-plugin.version>0.6.1</protobuf-maven-plugin.version>
-
-        <!-- 根据各自的系统修改，通过os插件获取系统信息 -->
-        <os.detected.classifier>windows-x86_64</os.detected.classifier>
     </properties>
 
     <dependencies>
+        <!-- protobuf -->
         <dependency>
             <groupId>com.google.protobuf</groupId>
             <artifactId>protobuf-java</artifactId>
@@ -32,39 +30,58 @@
             <artifactId>protobuf-java-util</artifactId>
             <version>${protobuf.version}</version>
         </dependency>
+
+        <!-- grpc -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency> <!-- necessary for Java 9+ -->
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>annotations-api</artifactId>
+            <version>6.0.53</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <!-- 获取系统信息，protobuf需要下载maven上的protoc插件，需要用到系统信息 -->
-            <plugin>
+        <!-- 提前执行，获取系统信息，protobuf需要下载maven上的protoc插件，需要用到系统信息 -->
+        <extensions>
+            <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
-                <version>${os-maven-plugin.version}</version>
-                <executions>
-                    <execution>
-                        <phase>initialize</phase>
-                        <goals>
-                            <goal>detect</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+                <version>1.6.2</version>
+            </extension>
+        </extensions>
+        <plugins>
             <!-- protobuf插件 -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <version>${protobuf-maven-plugin.version}</version>
                 <configuration>
-                    <pluginId>grpc-java</pluginId>
                     <!-- 下载protoc的地址 -->
                     <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <!--<pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>-->
+                    <pluginId>grpc-java</pluginId>
+                    <!-- grpc -->
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
                 </configuration>
                 <executions>
                     <execution>
                         <goals>
                             <goal>compile</goal>
+                            <goal>compile-custom</goal>
                         </goals>
                     </execution>
                 </executions>
