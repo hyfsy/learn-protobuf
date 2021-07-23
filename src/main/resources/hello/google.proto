@@ -1,0 +1,6 @@
+
+// any type
+import "google/protobuf/any.proto";
+// all option
+import "google/protobuf/descriptor.proto";
+

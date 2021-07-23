@@ -1,0 +1,111 @@
+// 默认proto2
+syntax = "proto3";
+
+// java中不可用
+import "hello/inner/inner.proto";
+import "hello/old/old.proto";
+import "google/protobuf/any.proto";
+
+// 定义消息类型
+message SearchRequest {
+
+  // scalar type 标量类型
+  // 1 到 15 范围内的字段编号占用一个字节进行编码，包括字段编号和字段类型
+  // 16 到 2047 范围内的字段编号占用两个字节。因此，您应该为非常频繁出现的消息元素保留数字 1 到 15。
+  // 编号不是protobuf的保留范围内的：19000 到 19999
+  string query = 1;
+  int32 page_number = 2;
+  int32 result_per_page = 3;
+
+  // composite type 复合类型
+  // enum ...
+
+
+  // 不能混合使用字段名称和字段编号
+  //    reserved 2, 3, 4 to 5;
+  //    reserved '-', "result_per_page", "ddd";
+}
+
+// ddd
+/* ddd */
+message SearchResponse {
+  string text = 1;
+  int32 code = 2;
+}
+
+message Foo {
+//  int32 page_number = 2;
+//  int32 foo = 3;
+
+  reserved 2, 15, 9 to 11;
+  reserved "foo", "bar";
+  reserved 999 to max; // 指定到最大值
+}
+
+message TestEnum {
+  enum EnumAllowAlias {
+    option allow_alias = true;
+
+    UNKNOWN_UNSPECIFIED = 0; // 第一个枚举必须为0
+    STARTED = 1;
+    RUNNING = 1;
+  }
+}
+
+message TestImport {
+  hello.inner.InnerObj innerObj = 1;
+}
+
+message TestUseOld {
+  New new = 1;
+  //  Other other = 2; // cannot import
+}
+
+message TestNest {
+  message Nest {
+
+  }
+  Nest nest = 1;
+}
+message TestUseNest {
+  TestNest.Nest nest = 1;
+}
+
+message TestAny {
+  string message = 1;
+  repeated google.protobuf.Any details = 2;
+}
+
+message TestOneof {
+  oneof One {
+    string only_one_can_set = 4;
+    string set_one_while_clear_other = 5;
+  }
+}
+
+message TestMap {
+  map<string, TestValue> map = 1;
+}
+message TestValue {
+}
+
+message TestService {
+}
+service SearchService {
+  rpc Search(SearchRequest) returns (SearchResponse);
+}
+
+option java_package = "com.hyf";
+option java_outer_classname = "Hello";
+option java_multiple_files  = false; // 默认
+
+option optimize_for = SPEED; // 默认序列化、反序列化最快速
+
+message TestOption {
+  int32 old_field = 1 [deprecated = true];
+}
+
+message TestOptional {
+  // 嵌入式消息
+  optional TestValue value = 1; // 重复时忽略
+}

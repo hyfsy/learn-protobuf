@@ -1,0 +1,7 @@
+
+// 防止名称冲突
+package hello.inner;
+
+message InnerObj {
+
+}

@@ -1,0 +1,3 @@
+// public的才能给引用该proto的proto使用
+import public "hello/old/new.proto";
+import "hello/old/other.proto";

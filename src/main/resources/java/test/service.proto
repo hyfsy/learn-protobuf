@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+package java.test;
+
+option java_package = "com.hyf.protobuf.test.service2";
+option java_multiple_files = true;
+option java_generic_services = true;
+//option java_outer_classname = "";
+
+//service MyService {
+//  rpc req(Request) returns (Response);
+//}
+message Request {
+  string param = 1;
+}
+message Response {
+  int32 code = 1;
+  string text = 2;
+  string rtn = 3;
+}

@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+// 防止名称冲突
+package hello.inner;
+
+message InnerObj {
+
+}
