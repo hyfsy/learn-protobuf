@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package grpc.service;
+
+option java_package = "com.hyf.grpc.service";
+option java_multiple_files = true;
+
+service ServiceStub {
+  rpc Unary(Request) returns (Response);
+
+  rpc ServerStreaming(Request) returns (stream Response);
+
+  rpc ClientStreaming(stream Request) returns (Response);
+
+  rpc BiDirectionalStreaming(stream Request) returns (stream Response);
+}
+
+message Request {
+  string uri = 1;
+}
+
+message Response {
+  int32 code = 1;
+}
